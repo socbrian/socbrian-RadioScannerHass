@@ -15,7 +15,9 @@ from .coordinator import SDRTrunkCoordinator
 class SDRTrunkStreamProxyView(HomeAssistantView):
     """Proxy audio stream from Icecast so Lovelace can use HA-relative URLs."""
 
-    requires_auth = True
+    # Keep stream usable for HTML media elements (audio/video) that can fail with
+    # HA auth headers in some clients and dashboards.
+    requires_auth = False
 
     def __init__(self, entry: ConfigEntry) -> None:
         self.url = f"/api/{DOMAIN}/{entry.entry_id}/stream"

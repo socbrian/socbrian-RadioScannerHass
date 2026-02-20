@@ -147,6 +147,11 @@ If stream loads but does not play:
 - Make sure Icecast mountpoint is reachable from Home Assistant host (`http://...:8000/p25` is valid; no `.mp3` required).
 - If your stream codec is not MP3, this card now uses the browser's native format detection from proxy response headers.
 
+If you get `401 Unauthorized` on `/api/sdrtrunk_proxy/<entry_id>/stream`:
+
+- Update to this latest version of the integration; stream proxy endpoint is now exposed without HA auth to support HTML audio clients.
+- Then hard refresh browser and re-open the dashboard.
+
 If you see `Custom element doesn't exist: sdrtrunk-player-card`:
 
 - Your resource is not being loaded. Add resource in **Dashboard → Edit dashboard → ⋮ → Manage resources**.
