@@ -1,0 +1,8 @@
+{
+  "name": "SDRTrunk Proxy Player",
+  "render_readme": true,
+  "homeassistant": "2024.6.0",
+  "content_in_root": false,
+  "zip_release": false,
+  "domains": ["sdrtrunk_proxy"]
+}
