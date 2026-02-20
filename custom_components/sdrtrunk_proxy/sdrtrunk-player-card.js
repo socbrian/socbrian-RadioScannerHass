@@ -9,10 +9,13 @@ class SDRTrunkPlayerCard extends HTMLElement {
   }
 
   setConfig(config) {
-    if (!config.stream_path || !config.metadata_path) {
-      throw new Error("Set stream_path and metadata_path from the integration entry.");
+    if (!config.stream_path) {
+      throw new Error("Set stream_path from the integration entry.");
     }
-    this._config = config;
+    this._config = {
+      ...config,
+      metadata_path: config.metadata_path || config.stream_path.replace(/\/stream$/, "/metadata")
+    };
     this._render();
     this._startPolling();
   }

@@ -139,6 +139,32 @@ If the card does not appear:
 - Confirm card type is exactly `custom:sdrtrunk-player-card`.
 - Confirm your `entry_id` is correct in both `stream_path` and `metadata_path`.
 
+If you see `Custom element doesn't exist: sdrtrunk-player-card`:
+
+- Your resource is not being loaded. Add resource in **Dashboard → Edit dashboard → ⋮ → Manage resources**.
+- Do **not** put `lovelace:` / `resources:` inside a view/card YAML block.
+- If you use YAML mode, `lovelace:` must be at the root in `configuration.yaml`, then restart Home Assistant.
+- Hard refresh browser after adding/changing resources.
+
+If you use `type: panel` views:
+
+- Use `card:` (single card), not `cards:`.
+
+Example panel view:
+
+```yaml
+views:
+  - title: Scanner
+    path: scanner
+    type: panel
+    card:
+      type: custom:sdrtrunk-player-card
+      title: Police Scanner
+      stream_path: /api/sdrtrunk_proxy/<entry_id>/stream
+```
+
+`metadata_path` is optional in the card. If omitted, it auto-uses the same path with `/metadata`.
+
 ---
 
 ## Notes
