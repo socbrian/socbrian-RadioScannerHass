@@ -75,26 +75,69 @@ After setup, the integration creates:
 
 ## Lovelace setup
 
-### 1) Add card resource
+If this is your first custom card, do these steps in order.
 
-Add this resource in Dashboard resources:
+### 1) Add the card JavaScript resource (UI method)
 
-- URL: `/api/sdrtrunk_proxy/static/sdrtrunk-player-card.js`
-- Type: `module`
+1. Open your dashboard.
+2. Click the **⋮** menu (top-right) → **Edit dashboard**.
+3. Click the **⋮** menu again → **Manage resources**.
+4. Click **Add resource**.
+5. Enter:
+   - **URL**: `/api/sdrtrunk_proxy/static/sdrtrunk-player-card.js`
+   - **Resource type**: `JavaScript Module` (or `module`)
+6. Click **Create** / **Save**.
 
-### 2) Add card
+If you use YAML mode dashboards, add this under `lovelace: resources:` in `configuration.yaml`:
 
-Use the integration-provided proxy paths:
+```yaml
+lovelace:
+  resources:
+    - url: /api/sdrtrunk_proxy/static/sdrtrunk-player-card.js
+      type: module
+```
+
+### 2) Get your integration `entry_id`
+
+You need this once to build your proxy paths.
+
+Options:
+
+1. **UI URL method (easiest):**
+   - Go to **Settings → Devices & Services → SDRTrunk Proxy Player → Configure**.
+   - Look at the browser URL; copy the long ID in the path (the config entry id).
+2. **Storage file method:**
+   - Open `.storage/core.config_entries`.
+   - Find the `"domain": "sdrtrunk_proxy"` block and copy `"entry_id"`.
+
+Example entry id:
+
+`01JABCDEF23456789XYZ00000`
+
+### 3) Add the card
+
+1. Open dashboard → **Edit dashboard** → **Add card**.
+2. Choose **Manual** card.
+3. Paste:
 
 ```yaml
 type: custom:sdrtrunk-player-card
 title: Police Scanner
-stream_path: /api/sdrtrunk_proxy/<entry_id>/stream
-metadata_path: /api/sdrtrunk_proxy/<entry_id>/metadata
+stream_path: /api/sdrtrunk_proxy/01JABCDEF23456789XYZ00000/stream
+metadata_path: /api/sdrtrunk_proxy/01JABCDEF23456789XYZ00000/metadata
 autoplay: false
 ```
 
-Replace `<entry_id>` with your config entry ID (from `.storage/core.config_entries` or browser URL while editing the integration entry).
+Replace the sample ID with your own entry id.
+
+### 4) Quick troubleshooting
+
+If the card does not appear:
+
+- Hard refresh browser (`Ctrl+F5`) after adding resource.
+- Confirm resource URL is exactly `/api/sdrtrunk_proxy/static/sdrtrunk-player-card.js`.
+- Confirm card type is exactly `custom:sdrtrunk-player-card`.
+- Confirm your `entry_id` is correct in both `stream_path` and `metadata_path`.
 
 ---
 
