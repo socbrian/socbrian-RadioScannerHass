@@ -27,7 +27,7 @@ class TalkerMetadata:
 class SDRTrunkCoordinator(DataUpdateCoordinator[TalkerMetadata]):
     """Coordinate SDRTrunk metadata polling."""
 
-    def __init__(self, hass: HomeAssistant, metadata_url: str, name: str) -> None:
+    def __init__(self, hass: HomeAssistant, metadata_url: str | None, name: str) -> None:
         super().__init__(
             hass,
             logger=logging.getLogger(__name__),
@@ -38,6 +38,9 @@ class SDRTrunkCoordinator(DataUpdateCoordinator[TalkerMetadata]):
 
     async def _async_update_data(self) -> TalkerMetadata:
         """Fetch and normalize metadata from configured endpoint."""
+        if not self._metadata_url:
+            return TalkerMetadata()
+
         try:
             session = async_get_clientsession(self.hass)
             async with session.get(self._metadata_url, timeout=10) as response:

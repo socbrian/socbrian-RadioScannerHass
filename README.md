@@ -24,15 +24,35 @@ If you already stream SDRTrunk audio to Icecast, this integration lets you consu
 
 ## Integrate with SDRTrunk
 
-You need two upstream URLs that Home Assistant will consume server-side:
+You need at least one upstream URL:
 
 1. **Stream URL** (from Icecast mountpoint), example:
    - `http://YOUR_ICECAST_HOST:8000/scanner.mp3`
-2. **Metadata JSON URL** (any JSON endpoint exposing current talker info), examples:
+2. **Metadata JSON URL** (**optional**, for who-is-talking data), examples:
    - Icecast status endpoint: `http://YOUR_ICECAST_HOST:8000/status-json.xsl`
    - A custom SDRTrunk metadata exporter endpoint if you run one.
 
-> Tip: if your metadata format differs, this integration still stores the raw payload in sensor attributes.
+If you don't have metadata yet, leave Metadata URL blank. Audio proxy still works, but talker fields will stay `idle`/empty.
+
+### Where can metadata JSON come from?
+
+Icecast only provides JSON if `status-json.xsl` is enabled and reachable. Some installs disable it.
+
+If your Icecast doesn't expose JSON, common options are:
+
+1. Use an SDRTrunk sidecar script/service that listens to SDRTrunk events and publishes a tiny JSON endpoint (talker, talkgroup, source).
+2. Publish metadata to MQTT from SDRTrunk, then expose it through Home Assistant as a REST endpoint/template sensor.
+3. Use any existing scanner backend endpoint that returns JSON and map fields via the integration's normalization logic.
+
+Minimum JSON this integration can use is:
+
+```json
+{
+  "talker": "Unit 123",
+  "talkgroup": "Dispatch",
+  "source": "County P25"
+}
+```
 
 ---
 
@@ -43,7 +63,7 @@ You need two upstream URLs that Home Assistant will consume server-side:
 3. Fill in:
    - **Name**
    - **Icecast stream URL**
-   - **Metadata JSON URL**
+   - **Metadata JSON URL** (optional)
 
 After setup, the integration creates:
 

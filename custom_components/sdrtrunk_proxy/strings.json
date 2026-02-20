@@ -3,11 +3,11 @@
     "step": {
       "user": {
         "title": "Connect SDRTrunk stream",
-        "description": "Configure your Icecast stream and metadata source.",
+        "description": "Configure your Icecast stream. Metadata URL is optional.",
         "data": {
           "name": "Name",
           "stream_url": "Icecast stream URL",
-          "metadata_url": "Metadata JSON URL"
+          "metadata_url": "Metadata JSON URL (optional)"
         }
       }
     }

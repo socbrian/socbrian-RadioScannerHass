@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from homeassistant.components.http import StaticPathConfig
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 
@@ -19,13 +20,21 @@ def _entry_store(hass: HomeAssistant) -> dict[str, dict]:
 async def async_setup(hass: HomeAssistant, config: dict) -> bool:
     """Set up static files used by the Lovelace card."""
     card_path = Path(__file__).parent
-    hass.http.register_static_path(STATIC_PATH, str(card_path), cache_headers=False)
+    await hass.http.async_register_static_paths(
+        [
+            StaticPathConfig(
+                url_path=STATIC_PATH,
+                path=str(card_path),
+                cache_headers=False,
+            )
+        ]
+    )
     return True
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up SDRTrunk Proxy from a config entry."""
-    coordinator = SDRTrunkCoordinator(hass, entry.data[CONF_METADATA_URL], entry.title)
+    coordinator = SDRTrunkCoordinator(hass, entry.data.get(CONF_METADATA_URL), entry.title)
     await coordinator.async_config_entry_first_refresh()
 
     _entry_store(hass)[entry.entry_id] = {"coordinator": coordinator}

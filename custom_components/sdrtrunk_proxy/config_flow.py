@@ -18,6 +18,7 @@ class SDRTrunkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
 
         if user_input is not None:
+            user_input[CONF_METADATA_URL] = user_input[CONF_METADATA_URL].strip() or None
             await self.async_set_unique_id(user_input[CONF_STREAM_URL])
             self._abort_if_unique_id_configured()
 
@@ -30,7 +31,7 @@ class SDRTrunkConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             {
                 vol.Required(CONF_NAME, default=DEFAULT_NAME): str,
                 vol.Required(CONF_STREAM_URL): str,
-                vol.Required(CONF_METADATA_URL): str,
+                vol.Optional(CONF_METADATA_URL, default=""): str,
             }
         )
 
