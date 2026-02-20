@@ -29,9 +29,7 @@ class SDRTrunkPlayerCard extends HTMLElement {
       <ha-card>
         <div style="padding:16px;display:flex;flex-direction:column;gap:8px;">
           <h3 style="margin:0;">${this._config.title || "SDRTrunk"}</h3>
-          <audio controls ${this._config.autoplay ? "autoplay" : ""} style="width:100%;">
-            <source src="${this._config.stream_path}" type="audio/mpeg" />
-          </audio>
+          <audio controls ${this._config.autoplay ? "autoplay" : ""} style="width:100%;" src="${this._config.stream_path}"></audio>
           <div><strong>Talker:</strong> <span id="talker">loading...</span></div>
           <div><strong>Talkgroup:</strong> <span id="talkgroup">-</span></div>
           <div><strong>Source:</strong> <span id="source">-</span></div>

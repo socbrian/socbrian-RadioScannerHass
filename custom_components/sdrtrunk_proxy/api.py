@@ -26,14 +26,28 @@ class SDRTrunkStreamProxyView(HomeAssistantView):
         """Proxy the upstream streaming endpoint."""
         session = async_get_clientsession(request.app["hass"])
         try:
-            upstream = await session.get(self._stream_url)
+            upstream = await session.get(
+                self._stream_url,
+                headers={
+                    "Icy-MetaData": "1",
+                    "Accept": "*/*",
+                },
+            )
         except ClientError as err:
             return web.Response(status=502, text=f"Failed to connect to upstream stream: {err}")
 
-        headers = {
-            "Content-Type": upstream.headers.get("Content-Type", "audio/mpeg"),
-            "Cache-Control": "no-store",
-        }
+        if upstream.status >= 400:
+            text = await upstream.text()
+            upstream.close()
+            return web.Response(
+                status=upstream.status,
+                text=text or f"Upstream stream returned HTTP {upstream.status}",
+            )
+
+        headers = {"Cache-Control": "no-store"}
+        content_type = upstream.headers.get("Content-Type")
+        if content_type:
+            headers["Content-Type"] = content_type
 
         downstream = web.StreamResponse(status=200, reason="OK", headers=headers)
         await downstream.prepare(request)

@@ -28,6 +28,7 @@ You need at least one upstream URL:
 
 1. **Stream URL** (from Icecast mountpoint), example:
    - `http://YOUR_ICECAST_HOST:8000/scanner.mp3`
+   - `http://YOUR_ICECAST_HOST:8000/p25` (no file extension is also valid)
 2. **Metadata JSON URL** (**optional**, for who-is-talking data), examples:
    - Icecast status endpoint: `http://YOUR_ICECAST_HOST:8000/status-json.xsl`
    - A custom SDRTrunk metadata exporter endpoint if you run one.
@@ -138,6 +139,13 @@ If the card does not appear:
 - Confirm resource URL is exactly `/api/sdrtrunk_proxy/static/sdrtrunk-player-card.js`.
 - Confirm card type is exactly `custom:sdrtrunk-player-card`.
 - Confirm your `entry_id` is correct in both `stream_path` and `metadata_path`.
+
+If stream loads but does not play:
+
+- Test the HA proxy URL directly in browser first: `/api/sdrtrunk_proxy/<entry_id>/stream`.
+- Check Home Assistant logs for upstream HTTP errors from the stream endpoint.
+- Make sure Icecast mountpoint is reachable from Home Assistant host (`http://...:8000/p25` is valid; no `.mp3` required).
+- If your stream codec is not MP3, this card now uses the browser's native format detection from proxy response headers.
 
 If you see `Custom element doesn't exist: sdrtrunk-player-card`:
 
