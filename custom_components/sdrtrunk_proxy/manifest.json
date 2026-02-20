@@ -1,0 +1,11 @@
+{
+  "domain": "sdrtrunk_proxy",
+  "name": "SDRTrunk Proxy Player",
+  "version": "0.1.0",
+  "documentation": "https://github.com/socbrian/RadioScannerHass",
+  "dependencies": [],
+  "codeowners": ["@socbrian"],
+  "config_flow": true,
+  "iot_class": "local_polling",
+  "requirements": []
+}
