@@ -2,7 +2,7 @@ class SDRTrunkPlayerCard extends HTMLElement {
   static getStubConfig() {
     return {
       title: "SDRTrunk",
-      stream_path: "/api/sdrtrunk_proxy/YOUR_ENTRY_ID/stream",
+      stream_path: "/sdrtrunk_proxy/YOUR_ENTRY_ID/stream",
       metadata_path: "/api/sdrtrunk_proxy/YOUR_ENTRY_ID/metadata",
       autoplay: false
     };
@@ -12,12 +12,27 @@ class SDRTrunkPlayerCard extends HTMLElement {
     if (!config.stream_path) {
       throw new Error("Set stream_path from the integration entry.");
     }
+    const inferredMetadataPath = this._inferMetadataPath(config.stream_path);
     this._config = {
       ...config,
-      metadata_path: config.metadata_path || config.stream_path.replace(/\/stream$/, "/metadata")
+      metadata_path: config.metadata_path || inferredMetadataPath
     };
     this._render();
     this._startPolling();
+  }
+
+  _inferMetadataPath(streamPath) {
+    const apiMatch = streamPath.match(/^\/api\/sdrtrunk_proxy\/([^/]+)\/stream$/);
+    if (apiMatch) {
+      return `/api/sdrtrunk_proxy/${apiMatch[1]}/metadata`;
+    }
+
+    const publicMatch = streamPath.match(/^\/sdrtrunk_proxy\/([^/]+)\/stream$/);
+    if (publicMatch) {
+      return `/api/sdrtrunk_proxy/${publicMatch[1]}/metadata`;
+    }
+
+    return null;
   }
 
   disconnectedCallback() {
@@ -39,6 +54,13 @@ class SDRTrunkPlayerCard extends HTMLElement {
   }
 
   _startPolling() {
+    if (!this._config.metadata_path) {
+      this.querySelector("#talker").textContent = "metadata disabled";
+      this.querySelector("#talkgroup").textContent = "-";
+      this.querySelector("#source").textContent = "-";
+      return;
+    }
+
     this._updateMetadata();
     if (this._timer) clearInterval(this._timer);
     this._timer = setInterval(() => this._updateMetadata(), 2000);

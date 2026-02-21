@@ -69,7 +69,8 @@ Minimum JSON this integration can use is:
 After setup, the integration creates:
 
 - Sensor: `<Name> Active Talker`
-- Proxy stream endpoint: `/api/sdrtrunk_proxy/<entry_id>/stream`
+- Proxy stream endpoint (preferred): `/sdrtrunk_proxy/<entry_id>/stream`
+- Legacy stream endpoint (still available): `/api/sdrtrunk_proxy/<entry_id>/stream`
 - Proxy metadata endpoint: `/api/sdrtrunk_proxy/<entry_id>/metadata`
 
 ---
@@ -124,10 +125,12 @@ Example entry id:
 ```yaml
 type: custom:sdrtrunk-player-card
 title: Police Scanner
-stream_path: /api/sdrtrunk_proxy/01JABCDEF23456789XYZ00000/stream
+stream_path: /sdrtrunk_proxy/01JABCDEF23456789XYZ00000/stream
 metadata_path: /api/sdrtrunk_proxy/01JABCDEF23456789XYZ00000/metadata
 autoplay: false
 ```
+
+Prefer `/sdrtrunk_proxy/<entry_id>/stream` for `stream_path` if you previously saw 401 errors.
 
 Replace the sample ID with your own entry id.
 
@@ -142,15 +145,22 @@ If the card does not appear:
 
 If stream loads but does not play:
 
-- Test the HA proxy URL directly in browser first: `/api/sdrtrunk_proxy/<entry_id>/stream`.
+- Test the HA proxy URL directly in browser first: `/sdrtrunk_proxy/<entry_id>/stream`.
 - Check Home Assistant logs for upstream HTTP errors from the stream endpoint.
 - Make sure Icecast mountpoint is reachable from Home Assistant host (`http://...:8000/p25` is valid; no `.mp3` required).
 - If your stream codec is not MP3, this card now uses the browser's native format detection from proxy response headers.
 
-If you get `401 Unauthorized` on `/api/sdrtrunk_proxy/<entry_id>/stream`:
+If you get `401 Unauthorized` on stream:
 
-- Update to this latest version of the integration; stream proxy endpoint is now exposed without HA auth to support HTML audio clients.
+- Use `/sdrtrunk_proxy/<entry_id>/stream` in your card `stream_path` (non-API route).
+- Update to this latest version of the integration; stream proxy endpoint is exposed without HA auth to support HTML audio clients.
 - Then hard refresh browser and re-open the dashboard.
+
+If Home Assistant logs `Login attempt or request with invalid authentication from localhost (127.0.0.1)` when starting audio:
+
+- Verify your integration **Stream URL** is your Icecast server (for example `http://192.168.1.10:8000/p25`) and **not** a Home Assistant URL.
+- If you don't use metadata, leave Metadata URL blank in the integration.
+- Card now auto-derives metadata only for known integration routes; otherwise metadata polling is disabled to avoid bad auth requests.
 
 If you see `Custom element doesn't exist: sdrtrunk-player-card`:
 
@@ -173,7 +183,7 @@ views:
     card:
       type: custom:sdrtrunk-player-card
       title: Police Scanner
-      stream_path: /api/sdrtrunk_proxy/<entry_id>/stream
+      stream_path: /sdrtrunk_proxy/<entry_id>/stream
 ```
 
 `metadata_path` is optional in the card. If omitted, it auto-uses the same path with `/metadata`.
@@ -182,7 +192,8 @@ views:
 
 ## Notes
 
-- Audio is authenticated via Home Assistant session because endpoints are under `/api`.
+- Stream endpoint is available on `/sdrtrunk_proxy/<entry_id>/stream` to avoid `/api` auth issues with browser audio.
+- Metadata endpoint remains under `/api/.../metadata` and uses Home Assistant auth.
 - No local network IP is required in Lovelace card config.
 - If your browser blocks autoplay, click play once manually.
 

@@ -20,7 +20,8 @@ class SDRTrunkStreamProxyView(HomeAssistantView):
     requires_auth = False
 
     def __init__(self, entry: ConfigEntry) -> None:
-        self.url = f"/api/{DOMAIN}/{entry.entry_id}/stream"
+        self.url = f"/{DOMAIN}/{entry.entry_id}/stream"
+        self.extra_urls = [f"/api/{DOMAIN}/{entry.entry_id}/stream"]
         self.name = f"api:{DOMAIN}:stream:{entry.entry_id}"
         self._stream_url = entry.data[CONF_STREAM_URL]
 
