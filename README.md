@@ -149,6 +149,7 @@ If stream loads but does not play:
 - Check Home Assistant logs for upstream HTTP errors from the stream endpoint.
 - Make sure Icecast mountpoint is reachable from Home Assistant host (`http://...:8000/p25` is valid; no `.mp3` required).
 - If your stream codec is not MP3, this card now uses the browser's native format detection from proxy response headers.
+- Mobile app compatibility: card now automatically falls back between `/sdrtrunk_proxy/<entry_id>/stream` and `/api/sdrtrunk_proxy/<entry_id>/stream` if first stream URL fails.
 
 If you get `401 Unauthorized` on stream:
 
